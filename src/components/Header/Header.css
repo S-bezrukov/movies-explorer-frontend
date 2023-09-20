@@ -3,6 +3,17 @@
   align-items: center;
   padding: 0 30px;
   min-height: 74px;
+  position: relative;
+}
+
+.header__background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Задайте нужный цвет и прозрачность */
+  z-index: -1; /* Помещаем фон под остальным контентом */
 }
 
 .header__block {
@@ -126,8 +137,8 @@
     visibility: hidden;
     background-color: #202020;
     position: fixed;
-    right: 0;
     top: 0;
+    right: 0;
     z-index: 10;
     min-width: 520px;
     height: 100%;
@@ -136,7 +147,7 @@
     width: auto;
     padding: 22px 22px 88px;
     box-sizing: border-box;
-    transform: translateX(-100%);
+    transform: translateX(100%);
     transition: all .4s ease-in-out;
   }
 
@@ -144,6 +155,7 @@
     visibility: visible;
     opacity: 1;
     transform: translateX(0);
+    width: 74%;
   }
 
   .header__burger {
@@ -183,4 +195,5 @@
   .header__button {
     padding: 5px 12px;
   }
+  
 }

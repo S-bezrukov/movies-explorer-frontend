@@ -7,7 +7,7 @@ const Register = () => {
   return (
     <section className="auth">
       <span className="logo auth__logo">
-        <img src={logo} alt="" className="logo__image" />
+      <Link to="/" className=""><img src={logo} alt="" className="logo__image" /></Link>
       </span>
       <h2 className="auth__title">Добро пожаловать!</h2>
       <form name="register-form" className="auth__form">
@@ -24,7 +24,7 @@ const Register = () => {
           <input type="password" className="auth__form-input base-input auth__form-input_type_error" name="password" required />
           <span className="auth__form-error">Что-то пошло не так...</span>
         </label>
-        <button type="button" className="auth__form-button base-button base-button_type_primary">Зарегистрироваться</button>
+        <a href="/signin" type="button" className="auth__form-button base-button base-button_type_primary">Зарегистрироваться</a>
       </form>
       <p className="auth__text">
         Уже зарегистрированы?{" "}

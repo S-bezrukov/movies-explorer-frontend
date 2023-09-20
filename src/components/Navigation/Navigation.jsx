@@ -4,10 +4,10 @@ import "./Navigation.css";
 
 const Navigation = () => {
   return (
-    <nav className="navigation">
+    <nav className="navigation" id="navMenu">
       <ul className="navigation__menu base-list">
         <li className="navigation__item">
-          <Link to="/" className="navigation__link main-link">Главная</Link>
+          <Link to="/" className="navigation__link base-link">Главная</Link>
         </li>
         <li className="navigation__item">
           <Link to="/movies" className="navigation__link navigation__link_active base-link">Фильмы</Link>

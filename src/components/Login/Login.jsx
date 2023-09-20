@@ -6,7 +6,7 @@ const Login = () => {
   return (
     <section className="auth">
       <span className="logo auth__logo">
-        <img src={logo} alt="" className="logo__image" />
+      <Link to="/" className=""><img src={logo} alt="" className="logo__image" /></Link>
       </span>
       <h2 className="auth__title">Рады видеть!</h2>
       <form name="register-form" className="auth__form">
@@ -18,7 +18,7 @@ const Login = () => {
           <span className="auth__form-text">Пароль</span>
           <input type="password" className="auth__form-input base-input" name="password" required/>
         </label>
-        <button type="button" className="auth__form-button base-button base-button_type_primary">Войти</button>
+        <a href="/movies" type="button" className="auth__form-button base-button base-button_type_primary">Войти</a>
       </form>
       <p className="auth__text">
         Ёще не зарегистрированы?{" "}

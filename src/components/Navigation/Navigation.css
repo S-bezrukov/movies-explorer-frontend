@@ -19,8 +19,8 @@
 }
 
 .navigation__item:first-of-type .navigation__link {
-  /* display: none; */
-  display: block;
+  display: none;
+  /* display: block; */
 }
 
 @media screen and (max-width: 820px) {
@@ -53,6 +53,7 @@
 @media screen and (max-width: 520px) {
   .navigation {
     margin-top: 45%;
+    padding-right: 0;
   }
 
   .navigation__menu {
