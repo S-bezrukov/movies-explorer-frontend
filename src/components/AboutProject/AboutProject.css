@@ -45,9 +45,11 @@
   max-width: 100%;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: calc(228/1140*100%) 1fr;
+  grid-template-columns: auto auto;
   row-gap: 14px;
   text-align: center;
+  grid-template-columns: 20% 1fr;
+  column-gap: 0;
 }
 
 .project__line_type_backend {
@@ -64,6 +66,7 @@
   justify-content: center;
   align-items: center;
   color: #fff;
+  margin: 0;
 }
 
 .project__line_type_backend {
@@ -81,7 +84,7 @@
 
 @media screen and (max-width: 768px) {
   .project {
-    padding: 90px 20px;
+    padding: 91px 20px;
   }
 
   .project__description {
@@ -89,9 +92,14 @@
     line-height: 18px;
   }
 
+  .project__line_type_backend {
+    background-color: #3ddc84;
+    color: #000;
+  }
+
   .project__time-line {
-    grid-template-columns: calc(100/284*100%) 1fr;
-    row-gap: 10px;
+    grid-template-columns: 21% 1fr;
+    column-gap: 0;
   }
 }
 
@@ -107,18 +115,19 @@
 
   .project__content {
     grid-template-columns: 1fr;
-    row-gap: 16px;
+    row-gap: 17px;
     margin-bottom: 60px;
   }
+  
 }
 
 @media screen and (max-width: 520px) {
   .project {
-    padding: 70px 0;
+    padding: 72px 0 67px 0;
   }
 
   .project__about {
-    margin-bottom: 64px;
+    margin-bottom: 61px;
     padding-bottom: 28px;
   }
 
@@ -126,6 +135,7 @@
     font-size: 18px;
     line-height: 21px;
     margin-bottom: 0;
+    letter-spacing: -0.72px;
   }
 
   .project__description {
@@ -133,9 +143,15 @@
     line-height: 16px;
   }
 
+  .project__time-line {
+    grid-template-columns: 35% 1fr;
+    row-gap: 11px;
+  }
+
   .project__line {
     font-size: 11px;
-    line-height: 13px;
+    line-height: normal;
+    min-height: 35px;
   }
 
   .project__text {

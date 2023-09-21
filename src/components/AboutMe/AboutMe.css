@@ -1,5 +1,5 @@
 .about {
-  padding: 110px 0 100px;
+  padding: 111px 0 101px;
 }
 
 .about__title {
@@ -105,8 +105,13 @@
 }
 
 @media screen and (max-width: 520px) {
+
   .about {
-    padding: 70px 0 70px;
+    padding: 78px 0 70px;
+  }
+
+  .about__block {
+    gap: 36px;
   }
 
   .about__title {

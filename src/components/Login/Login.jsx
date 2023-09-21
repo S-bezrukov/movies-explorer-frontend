@@ -8,17 +8,17 @@ const Login = () => {
       <span className="logo auth__logo">
       <Link to="/" className=""><img src={logo} alt="" className="logo__image" /></Link>
       </span>
-      <h2 className="auth__title">Рады видеть!</h2>
+      <h1 className="auth__title">Рады видеть!</h1>
       <form name="register-form" className="auth__form">
         <label className="auth__form-label">
           <span className="auth__form-text">E-mail</span>
-          <input type="email" className="auth__form-input base-input" name="email" required/>
+          <input type="email" className="auth__form-input base-input" name="email" placeholder="pochta@yandex.ru" required/>
         </label>
         <label className="auth__form-label">
           <span className="auth__form-text">Пароль</span>
           <input type="password" className="auth__form-input base-input" name="password" required/>
         </label>
-        <a href="/movies" type="button" className="auth__form-button base-button base-button_type_primary">Войти</a>
+        <a href="/movies" className="auth__form-button base-button base-button_type_primary">Войти</a>
       </form>
       <p className="auth__text">
         Ёще не зарегистрированы?{" "}

@@ -35,6 +35,10 @@
   line-height: 11px; /* 91.667% */
   padding: 8px 18px;
   border-radius: 30px;
+  min-width: 100px;
+  min-height: 29px;
+  justify-content: center;
+  background-color: #313131;
 }
 
 .movies-card__middle {
@@ -55,8 +59,12 @@
   height: 10px;
 }
 
-.movies-card__button_active {
+/* .movies-card__button_active {
   background-color: #313131;
+} */
+
+.base-button_type_dark {
+  background-color: #EE3465;
 }
 
 @media screen and (max-width: 920px) {

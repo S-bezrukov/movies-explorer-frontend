@@ -20,8 +20,8 @@ const Profile = () => {
             </ul>
           </div>
           <div className="profile__links">
-            <a href="/signup" className="profile__link profile__link_type_edit base-button base-link" type="button">Редактировать</a>
-            <a href="/" className="profile__link profile__link_type_exit base-button base-link" type="button">Выйти из аккаунта</a>
+            <a href="/signup" className="profile__link profile__link_type_edit base-button base-link">Редактировать</a>
+            <a href="/" className="profile__link profile__link_type_exit base-button base-link">Выйти из аккаунта</a>
           </div>
         </div>
       </div>

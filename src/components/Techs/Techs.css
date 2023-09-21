@@ -76,22 +76,43 @@
   }
 }
 
+@media screen and (max-width: 768px) {
+
+  .techs__list {
+    max-width: 100%;
+  }
+
+  .techs__item {
+    font-size: 12px;
+    letter-spacing: -0.48px;
+  }
+
+}
+
 @media screen and (max-width: 520px) {
   .techs {
-    padding: 70px 0;
+    padding: 68px 0;
   }
+
   .techs__main-title {
-    margin: 0 0 60px;
+    margin: 7px 0 64px;
   }
+
   .techs__title {
     font-size: 30px;
     letter-spacing: -1.2px;
     margin: 0 0 24px;
   }
+
   .techs__description {
     font-size: 11px;
     line-height: 16px;
     letter-spacing: -0.44px;
     padding-bottom: 50px;
   }
+
+  .techs__list {
+    max-width: 95%;
+  }
+
 }
