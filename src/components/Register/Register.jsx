@@ -43,7 +43,7 @@ const Register = ({
             defaultValue={values.name}
             minLength="2"
             maxLength="30"
-            pattern="^[А-ЯЁа-яёA-Za-z]+$"
+            pattern="^[А-ЯЁа-яёA-Za-z -]+$"
           />
           <span className="auth__form-error">
             {errors.name &&

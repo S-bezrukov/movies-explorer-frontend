@@ -31,7 +31,6 @@ const App = () => {
   const searchSaveMoviesCheckboxIsChecked = JSON.parse(localStorage.getItem("searchSaveMoviesCheckboxIsChecked"));
   const searchInputValue = localStorage.getItem("searchInputValue");
   const searchSaveMoviesInputValue = localStorage.getItem("searchSaveMoviesInputValue");
-  console.log("localStorage.loggedIn:", localStorage.getItem("loggedIn"));
   const loggedIn = localStorage.getItem("loggedIn") === "true";
   const [moviesIsChecked, setMoviesIsChecked] = React.useState(false);
   const [saveMoviesIsChecked, setSaveMoviesIsChecked] = React.useState(false);
@@ -54,12 +53,12 @@ const App = () => {
 
   const filterMovieDuration = allMovies && allMovies.filter((movie) => moviesIsChecked
       ? movie.duration <= DURATION_SHORT_FILM
-      : movie.duration > DURATION_SHORT_FILM
+      : movie.duration
     );
 
   const filterSaveMovieDuration = saveMovies && saveMovies.filter((movie) => saveMoviesIsChecked
       ? movie.duration <= DURATION_SHORT_FILM
-      : movie.duration > DURATION_SHORT_FILM
+      : movie.duration
     );
 
   const filterFullMovies = allMovies && allMovies.filter((movie) => searchInputValue
@@ -75,19 +74,19 @@ const App = () => {
     );
 
   const filterShortMovies = allMovies && allMovies.filter((movie) => searchInputValue
-      ? movie.nameRU.toLowerCase().includes(searchInputValue.toLowerCase()) && movie.duration > DURATION_SHORT_FILM
-      : movie.duration > DURATION_SHORT_FILM
+      ? movie.nameRU.toLowerCase().includes(searchInputValue.toLowerCase()) 
+      : true
     );
 
   const filterSaveShortMovies = saveMovies && saveMovies.filter((movie) => searchSaveMoviesInputValue
       ? movie.nameRU
         .toLowerCase()
-        .includes(searchSaveMoviesInputValue.toLowerCase()) && movie.duration > DURATION_SHORT_FILM
-      : movie.duration > DURATION_SHORT_FILM
+        .includes(searchSaveMoviesInputValue.toLowerCase())
+      : true
     );
 
   const signOutParameters = () => {
-    localStorage.setItem("loggedIn", false);
+    localStorage.clear();
     setMeSaveMovie([]);
     navigate("/");
     resetForm();
@@ -162,7 +161,6 @@ const App = () => {
         localStorage.setItem("loggedIn", true);
         setIsSuccess(true);
         setSuccessText("Вы успешно зарегистрировались!");
-        getAllMovies();
         getMySaveMovies();
       }
     } catch (error) {
@@ -367,21 +365,29 @@ const App = () => {
     };
   }, []);
 
-  const handleSearch = (evt) => {
-    evt.preventDefault();
-    try {
-      setIsValid(false);
-      if (pathname === "/movies") {
-        const searchAndFilterMovies = allMovies.filter((movie) => moviesIsChecked
-          ? movie.duration <= DURATION_SHORT_FILM &&
-            movie.nameRU
-            .toLowerCase()
-            .includes(values.searchMoviesValue.toLowerCase())
-          : movie.duration > DURATION_SHORT_FILM &&
-            movie.nameRU
-            .toLowerCase()
-            .includes(values.searchMoviesValue.toLowerCase())
+const handleSearch = async (evt) => {
+  evt.preventDefault();
+  try {
+    setIsValid(false);
+    if (pathname === "/movies") {
+      let searchAndFilterMovies;
+      const localStorageMovies = JSON.parse(localStorage.getItem("allMovies"));
+
+      if (!localStorageMovies) {
+        // Выполняем запрос к базе фильмов только при первом поиске
+        const data = await getAllMovies();
+        searchAndFilterMovies = data.filter((movie) =>
+          moviesIsChecked
+            ? movie.duration <= DURATION_SHORT_FILM &&
+              movie.nameRU
+                .toLowerCase()
+                .includes(values.searchMoviesValue.toLowerCase())
+            : 
+              movie.nameRU
+                .toLowerCase()
+                .includes(values.searchMoviesValue.toLowerCase())
         );
+
         setMovies(searchAndFilterMovies);
         localStorage.setItem(
           "searchMovies",
@@ -389,26 +395,48 @@ const App = () => {
         );
         localStorage.setItem("searchInputValue", values.searchMoviesValue);
       } else {
-        const searchAndFilterSaveMovies = saveMovies.filter((movie) => saveMoviesIsChecked
+        // Используем фильмы из локального хранилища
+        searchAndFilterMovies = localStorageMovies.filter((movie) =>
+          moviesIsChecked
+            ? movie.duration <= DURATION_SHORT_FILM &&
+              movie.nameRU
+                .toLowerCase()
+                .includes(values.searchMoviesValue.toLowerCase())
+            : 
+              movie.nameRU
+                .toLowerCase()
+                .includes(values.searchMoviesValue.toLowerCase())
+        );
+
+        setMovies(searchAndFilterMovies);
+        localStorage.setItem(
+          "searchMovies",
+          JSON.stringify(searchAndFilterMovies)
+        );
+        localStorage.setItem("searchInputValue", values.searchMoviesValue);
+      }
+    } else if (pathname === "/saved-movies") {
+      // Обработка поиска сохраненных фильмов
+      const searchAndFilterSaveMovies = meSaveMovie.filter((movie) =>
+        saveMoviesIsChecked
           ? movie.duration <= DURATION_SHORT_FILM &&
             movie.nameRU
-            .toLowerCase()
-            .includes(values.searchSaveMoviesValue.toLowerCase())
-          : movie.duration > DURATION_SHORT_FILM &&
+              .toLowerCase()
+              .includes(values.searchSaveMoviesValue.toLowerCase())
+          : 
             movie.nameRU
-            .toLowerCase()
-            .includes(values.searchSaveMoviesValue.toLowerCase())
-        );
-        setMeSaveMovie(searchAndFilterSaveMovies);
-        localStorage.setItem("searchSaveMovies", JSON.stringify(searchAndFilterSaveMovies));
-        localStorage.setItem("searchSaveMoviesInputValue", values.searchSaveMoviesValue);
-      }
-    } catch (error) {
-      setErrorText("Введите название фильма!");
-      setIsOpenInfoTooltip(true);
-      hideInfo();
+              .toLowerCase()
+              .includes(values.searchSaveMoviesValue.toLowerCase())
+      );
+
+      setMeSaveMovie(searchAndFilterSaveMovies);
     }
-  };
+  } catch (error) {
+    setErrorText("Введите название фильма!");
+    setIsOpenInfoTooltip(true);
+    hideInfo();
+  }
+};
 
   const handleChangeSearchInput = (evt) => {
     handleChange(evt);
@@ -450,6 +478,7 @@ const App = () => {
       setSaveMoviesIsChecked(evt.target.checked);
     }
   };
+  
 
   React.useEffect(() => {
     if (loggedIn && !searchInputValue) {

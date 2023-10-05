@@ -68,6 +68,11 @@
   background-color: #313131;
 }
 
+.base-button_disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .base-list {
   list-style: none;
   padding: 0;
