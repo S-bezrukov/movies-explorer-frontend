@@ -30,7 +30,7 @@ const App = () => {
   const searchCheckboxIsChecked = JSON.parse(localStorage.getItem("searchCheckboxIsChecked"));
   const searchSaveMoviesCheckboxIsChecked = JSON.parse(localStorage.getItem("searchSaveMoviesCheckboxIsChecked"));
   const searchInputValue = localStorage.getItem("searchInputValue");
-  const searchSaveMoviesInputValue = localStorage.getItem("searchSaveMoviesInputValue");
+  const searchSaveMoviesInputValue = "";
   const loggedIn = localStorage.getItem("loggedIn") === "true";
   const [moviesIsChecked, setMoviesIsChecked] = React.useState(false);
   const [saveMoviesIsChecked, setSaveMoviesIsChecked] = React.useState(false);
@@ -100,6 +100,13 @@ const App = () => {
     }, 2000);
   };
 
+  React.useEffect(() => {
+    if (loggedIn) {
+      getMySaveMovies();
+    }
+
+  }, [loggedIn, pathname]);
+
   const getMe = async () => {
     try {
       const data = await checkToken();
@@ -161,7 +168,6 @@ const App = () => {
         localStorage.setItem("loggedIn", true);
         setIsSuccess(true);
         setSuccessText("Вы успешно зарегистрировались!");
-        getMySaveMovies();
       }
     } catch (error) {
       setIsSuccess(false);
@@ -178,7 +184,6 @@ const App = () => {
     setIsSubmitLoading(true);
     try {
       const data = await login(values.email, values.password);
-      console.log(data)
       if (data) {
         navigate("/movies");
         setCurrentUser(data.user);
@@ -186,8 +191,6 @@ const App = () => {
         localStorage.setItem("loggedIn", true);
         setIsSuccess(true);
         setSuccessText("Вы успешно авторизовались!");
-        getAllMovies();
-        getMySaveMovies();
       }
     } catch (error) {
       setIsSuccess(false);
@@ -445,8 +448,6 @@ const handleSearch = async (evt) => {
       localStorage.removeItem("searchInputValue");
       setMovies(filterMovieDuration);
     } else if (evt.target.value === "" && pathname === "/saved-movies") {
-      localStorage.removeItem("searchSaveMovies");
-      localStorage.removeItem("searchSaveMoviesInputValue");
       setMeSaveMovie(filterSaveMovieDuration);
     }
   };
@@ -488,12 +489,12 @@ const handleSearch = async (evt) => {
 
     if (loggedIn && !searchSaveMoviesInputValue) {
       setMeSaveMovie(filterSaveMovieDuration);
-      localStorage.setItem("searchSaveMovies", JSON.stringify(filterSaveMovieDuration));
     }
 
     if (loggedIn) {
       getMe();
     }
+
   }, [loggedIn, pathname]);
 
   React.useEffect(() => {
@@ -557,7 +558,7 @@ const handleSearch = async (evt) => {
                   savedMovie={meSaveMovie}
                   openDeletePopup={handleDeleteMovieClick}
                   setIsLoading={setIsLoading}
-                  values={searchSaveMoviesInputValue ? searchSaveMoviesInputValue : values.searchSaveMoviesValue}
+                  values={""}
                   isValid={isValid}
                   errors={errors}
                   onSearch={handleSearch}

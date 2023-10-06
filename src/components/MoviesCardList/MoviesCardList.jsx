@@ -1,4 +1,5 @@
 import React from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import "./MoviesCardList.css";
 import MoviesCard from "../MoviesCard/MoviesCard";
 import Preloader from "../Preloader/Preloader";
@@ -13,11 +14,14 @@ const MoviesCardList = ({
   onclickLoadMore,
   isSubmitLoading,
 }) => {
+
+  const { pathname } = useLocation();
+
   return (
     <section className="movies-cards" aria-label="Список с фильмами">
       {isLoading ? (
         <Preloader />
-      ) : movies ? (
+      ) : pathname === "/movies" && movies ? (
         movies.length > 0 ? (
           <>
             <div className="movies-cards__list">
@@ -44,7 +48,7 @@ const MoviesCardList = ({
         ) : (
           <p className="movies-cards__not-found">Ничего не найдено :</p>
         )
-      ) : savedMovie && savedMovie.length > 0 ? (
+      ) : pathname === "/saved-movies" && savedMovie && savedMovie.length > 0 ? (
         <div className="movies-cards__list">
           {savedMovie.map((movie) => (
             <MoviesCard
