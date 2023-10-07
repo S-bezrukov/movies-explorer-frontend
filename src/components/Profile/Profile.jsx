@@ -28,9 +28,9 @@ const Profile = ({
       values.name === currentUser.name ||
       values.email === currentUser.email
     ) {
-      setIsUserData(false);
-    } else {
       setIsUserData(true);
+    } else {
+      setIsUserData(false);
     }
   }, [values.name, values.email, currentUser.name, currentUser.email]);
 
@@ -63,17 +63,9 @@ const Profile = ({
                   minLength="2"
                   maxLength="30"
                   required
-                  pattern="^[А-ЯЁа-яёA-Za-z]+$"
-                  // pattern="^[А-ЯЁа-яёA-Za-z -]+$"
+                  pattern="^[А-ЯЁа-яёA-Za-z -]+$"
                   disabled={isSubmitLoading}
                 />
-                {/* <span
-                  className={`profile__text ${
-                    !isEditProfile ? "profile__text_hide" : ""
-                  }`}
-                >
-                  {currentUser.name}
-                </span> */}
                 <span className="profile__error">
                   {errors.name &&
                     "Это поле должно содержать только латиницу, кириллицу, пробел или дефис."}
@@ -96,13 +88,6 @@ const Profile = ({
                   pattern="^\S+@\S+\.\S+$"
                   disabled={isSubmitLoading}
                 />
-                {/* <span
-                  className={`profile__text ${
-                    isEditProfile ? "" : "profile__text_hide"
-                  }`}
-                >
-                  {currentUser.email}
-                </span> */}
                 <span className="profile__error">{errors.email}</span>
               </li>
             </ul>

@@ -46,7 +46,7 @@ const MoviesCardList = ({
             )}
           </>
         ) : (
-          <p className="movies-cards__not-found">Ничего не найдено :</p>
+          <p className="movies-cards__not-found">Ничего не найдено:</p>
         )
       ) : pathname === "/saved-movies" && savedMovie && savedMovie.length > 0 ? (
         <div className="movies-cards__list">
@@ -61,7 +61,9 @@ const MoviesCardList = ({
           ))}
         </div>
       ) : (
-        <p className="movies-cards__not-found">Ничего не найдено :</p>
+        pathname === "/saved-movies" && savedMovie && savedMovie.length === 0 && (
+          <p className="movies-cards__not-found">Ничего не найдено:</p>
+        )
       )}
     </section>
   );
