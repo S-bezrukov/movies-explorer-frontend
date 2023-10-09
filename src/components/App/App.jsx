@@ -17,7 +17,7 @@ import { BASE_URL, getMovies } from "../../utils/MoviesApi";
 import ProtectedRouteElement from "../ProtectedRoute/ProtectedRoute";
 import { useFormWithValidation } from "../../hooks/useFormWithValidation";
 import DeleteMoviePopup from "../DeleteMoviePopup/DeleteMoviePopup";
-import { BREAKPOINT_DESKTOP, BREAKPOINT_TABLET, DURATION_SHORT_FILM, LOADING_MOVIE_DESKTOP, LOADING_MOVIE_TABLET_AND_MOBILE, RENDER_MOVIE_DESKTOP, RENDER_MOVIE_MOBILE, RENDER_MOVIE_TABLET,} from "../../utils/constants";
+import { DURATION_SHORT_FILM, LOADING_MOVIE_DESKTOP, RENDER_MOVIE_DESKTOP, } from "../../utils/constants";
 
 const App = () => {
   const { pathname } = useLocation();
@@ -27,12 +27,18 @@ const App = () => {
   const saveMovies = JSON.parse(localStorage.getItem("saveMovies"));
   const searchMovies = JSON.parse(localStorage.getItem("searchMovies"));
   const searchSaveMovies = JSON.parse(localStorage.getItem("searchSaveMovies"));
-  const searchCheckboxIsChecked = JSON.parse(localStorage.getItem("searchCheckboxIsChecked"));
-  const searchSaveMoviesCheckboxIsChecked = JSON.parse(localStorage.getItem("searchSaveMoviesCheckboxIsChecked"));
+  const [searchCheckboxIsChecked, setSearchCheckboxIsChecked] = React.useState(
+    JSON.parse(localStorage.getItem("searchCheckboxIsChecked")) || false
+  );
+  const [searchSaveMoviesCheckboxIsChecked, setSearchSaveMoviesCheckboxIsChecked] = React.useState(
+    JSON.parse(localStorage.getItem("searchSaveMoviesCheckboxIsChecked")) || false
+  );
   const searchInputValue = localStorage.getItem("searchInputValue");
   const searchSaveMoviesInputValue = "";
   const loggedIn = localStorage.getItem("loggedIn") === "true";
-  const [moviesIsChecked, setMoviesIsChecked] = React.useState(false);
+  const [moviesIsChecked, setMoviesIsChecked] = React.useState(
+    JSON.parse(localStorage.getItem("searchCheckboxIsChecked")) || false
+  );
   const [saveMoviesIsChecked, setSaveMoviesIsChecked] = React.useState(false);
   const [currentUser, setCurrentUser] = React.useState({});
   const [movieId, setMovieId] = React.useState("");
@@ -46,8 +52,6 @@ const App = () => {
   const [errorText, setErrorText] = React.useState("Во время запроса произошла ошибка. Возможно, проблема с соединением или сервер недоступен. Попробуйте ещё раз");
   const [isLoadingButtonText, setIsLoadingButtonText] = React.useState(false);
   const [isOpenPopup, setIsOpenPopup] = React.useState(false);
-  const [renderMovie, setRenderMovie] = React.useState(RENDER_MOVIE_DESKTOP);
-  const [loadMovie, setLoadMovie] = React.useState(LOADING_MOVIE_DESKTOP);
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
   const [isSubmitLoading, setIsSubmitLoading] = React.useState(false);
 
@@ -283,16 +287,31 @@ const App = () => {
     try {
       const { message } = await deleteSaveMovie(movieId);
       if (message) {
-        const deleteMovie = saveMovies.filter((movie) => movie._id !== movieId);
-        const saveDeleteMovie = saveMovies.filter((movie) => saveMoviesIsChecked
-          ? movie.duration <= DURATION_SHORT_FILM && movie._id !== movieId
-          : movie.duration > DURATION_SHORT_FILM && movie._id !== movieId
-        );
+        // Удаляем фильм с указанным movieId из массива saveMovies
+        const updatedSaveMovies = saveMovies.filter((movie) => movie._id !== movieId);
+        // Обновляем фильтрованный список сохраненных фильмов, если фильтры применены
+        const filteredSaveMovies = saveMoviesIsChecked
+          ? updatedSaveMovies.filter((movie) => movie.duration <= DURATION_SHORT_FILM)
+          : updatedSaveMovies;
+        setMeSaveMovie(filteredSaveMovies);
+        // Проверяем, есть ли значение в инпуте фильтра
+        if (values.searchSaveMoviesValue) {
+          // Если значение есть, фильтруем фильмы с учетом фильтрации
+          const searchAndFilterSaveMovies = filteredSaveMovies.filter((movie) =>
+            saveMoviesIsChecked
+              ? movie.duration <= DURATION_SHORT_FILM &&
+                movie.nameRU.toLowerCase().includes(values.searchSaveMoviesValue.toLowerCase())
+              : movie.nameRU.toLowerCase().includes(values.searchSaveMoviesValue.toLowerCase())
+          );
+          setMeSaveMovie(searchAndFilterSaveMovies);
+          localStorage.setItem("searchSaveMovies", JSON.stringify(searchAndFilterSaveMovies));
+        } else {
+          // Если значение инпута пустое, отображаем все сохраненные фильмы
+          localStorage.setItem("searchSaveMovies", JSON.stringify(filteredSaveMovies));
+        }
+        localStorage.setItem("saveMovies", JSON.stringify(updatedSaveMovies));
         setIsSuccess(true);
         setSuccessText(message);
-        setMeSaveMovie(saveDeleteMovie);
-        localStorage.setItem("searchSaveMovies",JSON.stringify(saveDeleteMovie));
-        localStorage.setItem("saveMovies", JSON.stringify(deleteMovie));
         closeAllPopups();
       }
     } catch (error) {
@@ -337,110 +356,79 @@ const App = () => {
     }
   }, [isOpenPopup]);
 
-  const onclickLoadMore = () => {
-    setRenderMovie(renderMovie + loadMovie);
-  };
-
-  const onResize = () => {
-    setTimeout(() => {
-      if (windowWidth >= BREAKPOINT_DESKTOP) {
-        setRenderMovie(RENDER_MOVIE_DESKTOP);
-        setLoadMovie(LOADING_MOVIE_DESKTOP);
-      } else if (windowWidth >= BREAKPOINT_TABLET) {
-        setRenderMovie(RENDER_MOVIE_TABLET);
-        setLoadMovie(LOADING_MOVIE_TABLET_AND_MOBILE);
-      } else {
-        setRenderMovie(RENDER_MOVIE_MOBILE);
-        setLoadMovie(LOADING_MOVIE_TABLET_AND_MOBILE);
-      }
-    }, 1000);
-  };
-
-  React.useEffect(() => {
-    onResize();
-  }, [windowWidth]);
-
-  React.useEffect(() => {
-    const resize = () => setWindowWidth(window.innerWidth);
-    window.addEventListener("resize", resize);
-    return () => {
-      window.removeEventListener("resize", resize);
-    };
-  }, []);
-
-const handleSearch = async (evt) => {
-  evt.preventDefault();
-  try {
-    setIsValid(false);
-    if (pathname === "/movies") {
-      let searchAndFilterMovies;
-      const localStorageMovies = JSON.parse(localStorage.getItem("allMovies"));
-
-      if (!localStorageMovies) {
-        // Выполняем запрос к базе фильмов только при первом поиске
-        const data = await getAllMovies();
-        searchAndFilterMovies = data.filter((movie) =>
-          moviesIsChecked
+  const handleSearch = async (evt) => {
+    evt.preventDefault();
+    try {
+      setIsValid(false);
+      if (pathname === "/movies") {
+        let searchAndFilterMovies;
+        const localStorageMovies = JSON.parse(localStorage.getItem("allMovies"));
+  
+        if (!localStorageMovies) {
+          // Выполняем запрос к базе фильмов только при первом поиске
+          const data = await getAllMovies();
+          searchAndFilterMovies = data.filter((movie) =>
+            moviesIsChecked
+              ? movie.duration <= DURATION_SHORT_FILM &&
+                movie.nameRU
+                  .toLowerCase()
+                  .includes(values.searchMoviesValue.toLowerCase())
+              : 
+                movie.nameRU
+                  .toLowerCase()
+                  .includes(values.searchMoviesValue.toLowerCase())
+          );
+  
+          setMovies(searchAndFilterMovies);
+          localStorage.setItem(
+            "searchMovies",
+            JSON.stringify(searchAndFilterMovies)
+          );
+          localStorage.setItem("searchInputValue", values.searchMoviesValue);
+        } else {
+          // Используем фильмы из локального хранилища
+          searchAndFilterMovies = localStorageMovies.filter((movie) =>
+            moviesIsChecked
+              ? movie.duration <= DURATION_SHORT_FILM &&
+                movie.nameRU
+                  .toLowerCase()
+                  .includes(values.searchMoviesValue.toLowerCase())
+              : 
+                movie.nameRU
+                  .toLowerCase()
+                  .includes(values.searchMoviesValue.toLowerCase())
+          );
+  
+          setMovies(searchAndFilterMovies);
+          localStorage.setItem(
+            "searchMovies",
+            JSON.stringify(searchAndFilterMovies)
+          );
+          localStorage.setItem("searchInputValue", values.searchMoviesValue);
+        }
+      } else if (pathname === "/saved-movies") {
+        // Обработка поиска сохраненных фильмов
+        const searchAndFilterSaveMovies = meSaveMovie.filter((movie) =>
+          saveMoviesIsChecked
             ? movie.duration <= DURATION_SHORT_FILM &&
               movie.nameRU
                 .toLowerCase()
-                .includes(values.searchMoviesValue.toLowerCase())
+                .includes(values.searchSaveMoviesValue.toLowerCase())
             : 
               movie.nameRU
                 .toLowerCase()
-                .includes(values.searchMoviesValue.toLowerCase())
+                .includes(values.searchSaveMoviesValue.toLowerCase())
         );
-
-        setMovies(searchAndFilterMovies);
-        localStorage.setItem(
-          "searchMovies",
-          JSON.stringify(searchAndFilterMovies)
-        );
-        localStorage.setItem("searchInputValue", values.searchMoviesValue);
-      } else {
-        // Используем фильмы из локального хранилища
-        searchAndFilterMovies = localStorageMovies.filter((movie) =>
-          moviesIsChecked
-            ? movie.duration <= DURATION_SHORT_FILM &&
-              movie.nameRU
-                .toLowerCase()
-                .includes(values.searchMoviesValue.toLowerCase())
-            : 
-              movie.nameRU
-                .toLowerCase()
-                .includes(values.searchMoviesValue.toLowerCase())
-        );
-
-        setMovies(searchAndFilterMovies);
-        localStorage.setItem(
-          "searchMovies",
-          JSON.stringify(searchAndFilterMovies)
-        );
-        localStorage.setItem("searchInputValue", values.searchMoviesValue);
+  
+        setMeSaveMovie(searchAndFilterSaveMovies);
       }
-    } else if (pathname === "/saved-movies") {
-      // Обработка поиска сохраненных фильмов
-      const searchAndFilterSaveMovies = meSaveMovie.filter((movie) =>
-        saveMoviesIsChecked
-          ? movie.duration <= DURATION_SHORT_FILM &&
-            movie.nameRU
-              .toLowerCase()
-              .includes(values.searchSaveMoviesValue.toLowerCase())
-          : 
-            movie.nameRU
-              .toLowerCase()
-              .includes(values.searchSaveMoviesValue.toLowerCase())
-      );
-
-      setMeSaveMovie(searchAndFilterSaveMovies);
+    } catch (error) {
+      setErrorText("Введите название фильма!");
+      setIsOpenInfoTooltip(true);
+      hideInfo();
     }
-  } catch (error) {
-    setErrorText("Введите название фильма!");
-    setIsOpenInfoTooltip(true);
-    hideInfo();
-  }
-};
-
+  };
+ 
   const handleChangeSearchInput = (evt) => {
     handleChange(evt);
     if (evt.target.value === "" && pathname === "/movies") {
@@ -480,7 +468,6 @@ const handleSearch = async (evt) => {
     }
   };
   
-
   React.useEffect(() => {
     if (loggedIn && !searchInputValue) {
       setMovies(filterMovieDuration);
@@ -495,6 +482,8 @@ const handleSearch = async (evt) => {
       getMe();
     }
 
+    setSaveMoviesIsChecked(false);
+    
   }, [loggedIn, pathname]);
 
   React.useEffect(() => {
@@ -514,7 +503,7 @@ const handleSearch = async (evt) => {
       setMeSaveMovie(filterSaveMovieDuration);
     }
   }, []);
-
+  
   return (
     <div className="App">
       <CurrentUserContext.Provider value={currentUser}>
@@ -536,7 +525,6 @@ const handleSearch = async (evt) => {
                   openDeletePopup={handleDeleteMovieClick}
                   isLoading={isLoading}
                   setIsLoading={setIsLoading}
-                  renderMovie={renderMovie}
                   values={searchInputValue ? searchInputValue : values.searchMoviesValue}
                   isValid={isValid}
                   errors={errors}
@@ -544,7 +532,6 @@ const handleSearch = async (evt) => {
                   handleChangeSearchInput={handleChangeSearchInput}
                   handleChangeCheckbox={handleChangeSearchCheckbox}
                   isChecked={moviesIsChecked}
-                  onclickLoadMore={onclickLoadMore}
                   isSubmitLoading={isSubmitLoading}
                   loggedIn={loggedIn}
                 />

@@ -1,9 +1,18 @@
-export const MINUTES_NUMBER = 60;
-export const DURATION_SHORT_FILM = 40;
-export const BREAKPOINT_DESKTOP = 990;
-export const BREAKPOINT_TABLET = 700;
-export const RENDER_MOVIE_DESKTOP = 12;
-export const RENDER_MOVIE_TABLET = 8;
-export const RENDER_MOVIE_MOBILE = 5;
-export const LOADING_MOVIE_DESKTOP = 3;
-export const LOADING_MOVIE_TABLET_AND_MOBILE = 2;
+
+const MINUTES_NUMBER = 60
+const DURATION_SHORT_FILM = 40
+const MaxScreen = 1280
+const MediumScreen = 1024
+const SmallScreen = 650
+const InitMoreMaxScreen = 12
+const InitLessMaxScreen = 8
+const InitMediumScreen = 8
+const InitSmallScreen = 5
+const StepMaxScreen = 3
+const StepMediumScreen = 2
+const StepSmallScreen = 2
+
+export {
+MINUTES_NUMBER, DURATION_SHORT_FILM, MaxScreen, MediumScreen, SmallScreen, InitMoreMaxScreen,
+InitLessMaxScreen,InitMediumScreen,InitSmallScreen, StepMaxScreen, StepMediumScreen, StepSmallScreen
+}

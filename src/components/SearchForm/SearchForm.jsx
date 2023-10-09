@@ -60,13 +60,13 @@ const SearchForm = ({
           Поиск
         </button>
       </label>
-
       <label className="search__label search__label-checkbox">
         <input
           type="checkbox"
           className="search__checkbox-input"
           name="searchCheckbox"
           onChange={handleChangeCheckbox}
+          checked={isChecked}
         />
         <span
           className={`search__checkbox ${
@@ -75,7 +75,6 @@ const SearchForm = ({
         ></span>
         Короткометражки
       </label>
-
     </form>
   );
 };
