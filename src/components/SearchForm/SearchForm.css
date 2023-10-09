@@ -1,0 +1,131 @@
+.search {
+  position: relative;
+  border-bottom: 1px solid rgba(170, 170, 170, 0.2);
+}
+
+.search__label {
+  position: relative;
+}
+
+.search__input {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 20px;
+  color: #8b8b8b;
+  width: 100%;
+  border-radius: 8px;
+  border: 1.5px solid rgba(170, 170, 170, 0.2);
+  padding: 25px;
+}
+
+.search__input:focus {
+  outline: 1px solid #4285f4;
+}
+
+.search__button {
+  border-radius: 5px;
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 18px;
+  padding: 16px;
+  min-width: 100px;
+  transform: translateY(-50%);
+}
+
+.search__label-checkbox {
+  display: flex;
+  color: #fff;
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  gap: 14px;
+  cursor: pointer;
+  margin-top: 26px;
+  margin-bottom: 43px;
+}
+
+.search__checkbox-input {
+  display: none;
+}
+
+.search__checkbox:hover {
+  opacity: 0.7;
+}
+
+.search__checkbox-input:checked + .search__checkbox {
+  background-color: #3ddc84;
+}
+
+.search__checkbox-input:checked + .search__checkbox::after {
+  transform: translate(100%, -50%);
+  background-color: #fff;
+}
+
+@media screen and (max-width: 1170px) {
+  .search {
+    margin: 0 30px 0;
+  }
+  .search__label-checkbox {
+    margin-bottom: 51px;
+  }
+}
+
+@media screen and (max-width: 680px) {
+  .search {
+    margin: 0 14px 0;
+  }
+  .search__input {
+    font-size: 16px;
+    line-height: 16px;
+    padding: 17px 12px;
+  }
+  .search__button {
+    min-width: 80px;
+    right: 5px;
+    padding: 12px;
+  }
+  .search__label-checkbox {
+    margin-top: 30px;
+    margin-bottom: 63px;
+    font-size: 11px;
+  }
+}
+
+.search__checkbox {
+  width: 36px;
+  height: 20px;
+  border-radius: 20px;
+  background-color: #f5f5f5;
+  position: relative;
+  transition: all .4s;
+}
+
+.search__checkbox:hover {
+  opacity: 0.7;
+}
+
+.search__checkbox_checked {
+  background-color: #3ddc84;
+}
+
+.search__checkbox::after {
+  content: '';
+  width: 16px;
+  height: 16px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.4);
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  left: 2px;
+  transform: translate(0, -50%);
+  background-color: #f5f5f5;
+  transition: all .4s;
+}
+
+.search__checkbox_checked::after {
+  transform: translate(100%, -50%);
+  background-color: #fff;
+}
